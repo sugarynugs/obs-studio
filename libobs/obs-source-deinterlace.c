@@ -241,6 +241,9 @@ void deinterlace_update_async_video(obs_source_t *source)
 	frame = get_prev_frame(source, &updated);
 
 	source->deinterlace_rendered = true;
+	if (frame)
+		frame = filter_async_video(source, frame);
+
 	if (frame) {
 		if (set_async_texture_size(source, frame)) {
 			update_async_texture(source, frame,
