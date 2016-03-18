@@ -1583,9 +1583,6 @@ static void obs_source_draw_async_texture(struct obs_source *source)
 	}
 }
 
-static inline struct obs_source_frame *filter_async_video(obs_source_t *source,
-		struct obs_source_frame *in);
-
 static void obs_source_update_async_video(obs_source_t *source)
 {
 	if (!source->async_rendered) {
@@ -2010,7 +2007,7 @@ obs_data_t *obs_source_get_settings(const obs_source_t *source)
 	return source->context.settings;
 }
 
-static inline struct obs_source_frame *filter_async_video(obs_source_t *source,
+struct obs_source_frame *filter_async_video(obs_source_t *source,
 		struct obs_source_frame *in)
 {
 	size_t i;

@@ -729,6 +729,8 @@ extern void obs_source_audio_render(obs_source_t *source, uint32_t mixers,
 
 extern void add_alignment(struct vec2 *v, uint32_t align, int cx, int cy);
 
+extern struct obs_source_frame *filter_async_video(obs_source_t *source,
+		struct obs_source_frame *in);
 extern bool update_async_texture(struct obs_source *source,
 		const struct obs_source_frame *frame,
 		gs_texture_t *tex, gs_texrender_t *texrender);
