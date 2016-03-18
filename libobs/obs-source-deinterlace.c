@@ -327,7 +327,7 @@ void deinterlace_render(obs_source_t *s)
 
 	gs_effect_set_texture(image, cur_tex);
 	gs_effect_set_texture(prev, prev_tex);
-	gs_effect_set_int(field, !s->deinterlace_top_first);
+	gs_effect_set_int(field, s->deinterlace_top_first);
 	gs_effect_set_vec2(dimensions, &size);
 
 	if (yuv) {
