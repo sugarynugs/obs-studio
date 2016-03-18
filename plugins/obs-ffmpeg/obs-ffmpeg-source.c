@@ -370,7 +370,7 @@ static obs_properties_t *ffmpeg_source_getproperties(void *data)
 	dstr_cat(&filter, obs_module_text("MediaFileFilter.AllFiles"));
 	dstr_cat(&filter, " (*.*)");
 
-	if (s && s->input) {
+	if (s && s->input && *s->input) {
 		const char *slash;
 
 		dstr_copy(&path, s->input);
