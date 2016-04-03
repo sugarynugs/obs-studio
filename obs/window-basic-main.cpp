@@ -749,6 +749,9 @@ bool OBSBasic::InitBasicConfigDefaults()
 	config_set_default_uint  (basicConfig, "Video", "BaseCX",   cx);
 	config_set_default_uint  (basicConfig, "Video", "BaseCY",   cy);
 
+	config_set_default_string(basicConfig, "Output", "FilenameFormatting",
+			"%CCYY-%MM-%DD %hh-%mm-%ss");
+
 	config_set_default_bool  (basicConfig, "Output", "DelayEnable", false);
 	config_set_default_uint  (basicConfig, "Output", "DelaySec", 20);
 	config_set_default_bool  (basicConfig, "Output", "DelayPreserve", true);
@@ -858,6 +861,26 @@ void OBSBasic::InitPrimitives()
 	gs_vertex2f(1.0f, 0.0f);
 	gs_vertex2f(0.0f, 0.0f);
 	box = gs_render_save();
+
+	gs_render_start(true);
+	gs_vertex2f(0.0f, 0.0f);
+	gs_vertex2f(0.0f, 1.0f);
+	boxLeft = gs_render_save();
+
+	gs_render_start(true);
+	gs_vertex2f(0.0f, 0.0f);
+	gs_vertex2f(1.0f, 0.0f);
+	boxTop = gs_render_save();
+
+	gs_render_start(true);
+	gs_vertex2f(1.0f, 0.0f);
+	gs_vertex2f(1.0f, 1.0f);
+	boxRight = gs_render_save();
+
+	gs_render_start(true);
+	gs_vertex2f(0.0f, 1.0f);
+	gs_vertex2f(1.0f, 1.0f);
+	boxBottom = gs_render_save();
 
 	gs_render_start(true);
 	for (int i = 0; i <= 360; i += (360/20)) {
@@ -1276,6 +1299,10 @@ OBSBasic::~OBSBasic()
 
 	obs_enter_graphics();
 	gs_vertexbuffer_destroy(box);
+	gs_vertexbuffer_destroy(boxLeft);
+	gs_vertexbuffer_destroy(boxTop);
+	gs_vertexbuffer_destroy(boxRight);
+	gs_vertexbuffer_destroy(boxBottom);
 	gs_vertexbuffer_destroy(circle);
 	obs_leave_graphics();
 
@@ -3687,6 +3714,8 @@ void OBSBasic::on_actionResetTransform_triggered()
 		if (!obs_sceneitem_selected(item))
 			return true;
 
+		obs_sceneitem_defer_update_begin(item);
+
 		obs_transform_info info;
 		vec2_set(&info.pos, 0.0f, 0.0f);
 		vec2_set(&info.scale, 1.0f, 1.0f);
@@ -3696,6 +3725,11 @@ void OBSBasic::on_actionResetTransform_triggered()
 		info.bounds_alignment = OBS_ALIGN_CENTER;
 		vec2_set(&info.bounds, 0.0f, 0.0f);
 		obs_sceneitem_set_info(item, &info);
+
+		obs_sceneitem_crop crop = {};
+		obs_sceneitem_set_crop(item, &crop);
+
+		obs_sceneitem_defer_update_end(item);
 
 		UNUSED_PARAMETER(scene);
 		UNUSED_PARAMETER(param);
