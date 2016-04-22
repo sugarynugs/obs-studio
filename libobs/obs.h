@@ -1633,6 +1633,8 @@ EXPORT void *obs_encoder_get_type_data(obs_encoder_t *encoder);
 
 EXPORT const char *obs_encoder_get_id(const obs_encoder_t *encoder);
 
+EXPORT uint32_t obs_get_encoder_caps(const char *encoder_id);
+
 /** Duplicates an encoder packet */
 EXPORT void obs_duplicate_encoder_packet(struct encoder_packet *dst,
 		const struct encoder_packet *src);
@@ -1647,6 +1649,9 @@ EXPORT const char *obs_service_get_display_name(const char *id);
 
 EXPORT obs_service_t *obs_service_create(const char *id, const char *name,
 		obs_data_t *settings, obs_data_t *hotkey_data);
+
+EXPORT obs_service_t *obs_service_create_private(const char *id,
+		const char *name, obs_data_t *settings);
 
 /**
  * Adds/releases a reference to a service.  When the last reference is

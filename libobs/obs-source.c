@@ -166,6 +166,16 @@ bool obs_source_init(struct obs_source *source)
 	if (is_audio_source(source) || is_composite_source(source))
 		allocate_audio_output_buffer(source);
 
+	if (source->info.type == OBS_SOURCE_TYPE_TRANSITION) {
+		if (!obs_transition_init(source))
+			return false;
+	}
+
+	source->control = bzalloc(sizeof(obs_weak_source_t));
+	source->deinterlace_top_first = true;
+	source->control->source = source;
+	source->audio_mixers = 0xF;
+
 	if (is_audio_source(source)) {
 		pthread_mutex_lock(&obs->data.audio_sources_mutex);
 
@@ -179,16 +189,6 @@ bool obs_source_init(struct obs_source *source)
 
 		pthread_mutex_unlock(&obs->data.audio_sources_mutex);
 	}
-
-	if (source->info.type == OBS_SOURCE_TYPE_TRANSITION) {
-		if (!obs_transition_init(source))
-			return false;
-	}
-
-	source->control = bzalloc(sizeof(obs_weak_source_t));
-	source->deinterlace_top_first = true;
-	source->control->source = source;
-	source->audio_mixers = 0xF;
 
 	obs_context_data_insert(&source->context,
 			&obs->data.sources_mutex,
@@ -304,6 +304,13 @@ static obs_source_t *obs_source_create_internal(const char *id,
 		source->owns_info_id = true;
 	} else {
 		source->info = *info;
+
+		/* Always mark filters as private so they aren't found by
+		 * source enum/search functions.
+		 *
+		 * XXX: Fix design flaws with filters */
+		if (info->type == OBS_SOURCE_TYPE_FILTER)
+			private = true;
 	}
 
 	source->mute_unmute_key  = OBS_INVALID_HOTKEY_PAIR_ID;
@@ -2666,6 +2673,18 @@ void obs_source_process_filter_begin(obs_source_t *filter,
 
 	target       = obs_filter_get_target(filter);
 	parent       = obs_filter_get_parent(filter);
+
+	if (!target) {
+		blog(LOG_INFO, "filter '%s' being processed with no target!",
+				filter->context.name);
+		return;
+	}
+	if (!parent) {
+		blog(LOG_INFO, "filter '%s' being processed with no parent!",
+				filter->context.name);
+		return;
+	}
+
 	target_flags = target->info.output_flags;
 	parent_flags = parent->info.output_flags;
 	cx           = get_base_width(target);
@@ -2724,6 +2743,10 @@ void obs_source_process_filter_tech_end(obs_source_t *filter, gs_effect_t *effec
 
 	target       = obs_filter_get_target(filter);
 	parent       = obs_filter_get_parent(filter);
+
+	if (!target || !parent)
+		return;
+
 	target_flags = target->info.output_flags;
 	parent_flags = parent->info.output_flags;
 
@@ -3658,7 +3681,7 @@ static inline void process_audio_source_tick(obs_source_t *source,
 void obs_source_audio_render(obs_source_t *source, uint32_t mixers,
 		size_t channels, size_t sample_rate, size_t size)
 {
-	if (!source || !source->audio_output_buf[0][0]) {
+	if (!source->audio_output_buf[0][0]) {
 		source->audio_pending = true;
 		return;
 	}

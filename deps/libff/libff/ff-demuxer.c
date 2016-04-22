@@ -23,6 +23,8 @@
 
 #include <assert.h>
 
+#include "ff-compat.h"
+
 #define DEFAULT_AV_SYNC_TYPE AV_SYNC_VIDEO_MASTER
 
 #define AUDIO_FRAME_QUEUE_SIZE 1
@@ -92,7 +94,7 @@ void ff_demuxer_free(struct ff_demuxer *demuxer)
 		ff_decoder_free(demuxer->video_decoder);
 
 	if (demuxer->format_context)
-		avformat_free_context(demuxer->format_context);
+		avformat_close_input(&demuxer->format_context);
 
 	av_free(demuxer);
 }
@@ -342,15 +344,15 @@ void ff_demuxer_reset(struct ff_demuxer *demuxer)
 	packet.clock = clock;
 
 	if (demuxer->audio_decoder != NULL) {
+		ff_clock_retain(clock);
 		packet_queue_put(&demuxer->audio_decoder->packet_queue,
 				&packet);
-		ff_clock_retain(clock);
 	}
 
 	if (demuxer->video_decoder != NULL) {
+		ff_clock_retain(clock);
 		packet_queue_put(&demuxer->video_decoder->packet_queue,
 				&packet);
-		ff_clock_retain(clock);
 	}
 }
 

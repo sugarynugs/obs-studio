@@ -185,6 +185,106 @@
            </property>
           </widget>
          </item>
+         <item row="5" column="0" colspan="2">
+          <widget class="Line" name="line_4">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+         <item row="6" column="0" colspan="2">
+          <widget class="QGroupBox" name="groupBox_10">
+           <property name="enabled">
+            <bool>true</bool>
+           </property>
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="title">
+            <string>Basic.Settings.General.Snapping</string>
+           </property>
+           <property name="flat">
+            <bool>false</bool>
+           </property>
+           <layout class="QFormLayout" name="formLayout_21">
+            <property name="labelAlignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+            <item row="0" column="1">
+             <widget class="QCheckBox" name="snappingEnabled">
+              <property name="text">
+               <string>Enable</string>
+              </property>
+              <property name="checked">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="1">
+             <widget class="QCheckBox" name="screenSnapping">
+              <property name="text">
+               <string>Basic.Settings.General.ScreenSnapping</string>
+              </property>
+              <property name="checked">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="4" column="1">
+             <widget class="QCheckBox" name="centerSnapping">
+              <property name="text">
+               <string>Basic.Settings.General.CenterSnapping</string>
+              </property>
+              <property name="checked">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="1">
+             <widget class="QCheckBox" name="sourceSnapping">
+              <property name="text">
+               <string>Basic.Settings.General.SourceSnapping</string>
+              </property>
+              <property name="checked">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1">
+             <widget class="QDoubleSpinBox" name="snapDistance">
+              <property name="decimals">
+               <number>1</number>
+              </property>
+              <property name="singleStep">
+               <double>0.500000000000000</double>
+              </property>
+              <property name="value">
+               <double>10.000000000000000</double>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0">
+             <widget class="QLabel" name="label_9">
+              <property name="minimumSize">
+               <size>
+                <width>170</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>Basic.Settings.General.SnapDistance</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
         </layout>
        </widget>
        <widget class="QWidget" name="streamPage">
@@ -439,7 +539,7 @@
                   </property>
                  </widget>
                 </item>
-                <item row="1" column="0">
+                <item row="2" column="0">
                  <widget class="QLabel" name="label_20">
                   <property name="text">
                    <string>Basic.Settings.Output.AudioBitrate</string>
@@ -449,7 +549,7 @@
                   </property>
                  </widget>
                 </item>
-                <item row="1" column="1">
+                <item row="2" column="1">
                  <widget class="QComboBox" name="simpleOutputABitrate">
                   <property name="currentIndex">
                    <number>8</number>
@@ -511,7 +611,7 @@
                   </item>
                  </widget>
                 </item>
-                <item row="2" column="1">
+                <item row="3" column="1">
                  <widget class="QCheckBox" name="simpleOutAdvanced">
                   <property name="text">
                    <string>Basic.Settings.Output.Advanced</string>
@@ -521,51 +621,10 @@
                   </property>
                  </widget>
                 </item>
-                <item row="3" column="1">
-                 <widget class="QComboBox" name="simpleOutPreset">
-                  <item>
-                   <property name="text">
-                    <string notr="true">ultrafast</string>
-                   </property>
-                  </item>
-                  <item>
-                   <property name="text">
-                    <string notr="true">superfast</string>
-                   </property>
-                  </item>
-                  <item>
-                   <property name="text">
-                    <string notr="true">veryfast</string>
-                   </property>
-                  </item>
-                  <item>
-                   <property name="text">
-                    <string notr="true">faster</string>
-                   </property>
-                  </item>
-                  <item>
-                   <property name="text">
-                    <string notr="true">fast</string>
-                   </property>
-                  </item>
-                  <item>
-                   <property name="text">
-                    <string notr="true">medium</string>
-                   </property>
-                  </item>
-                  <item>
-                   <property name="text">
-                    <string notr="true">slow</string>
-                   </property>
-                  </item>
-                  <item>
-                   <property name="text">
-                    <string notr="true">slower</string>
-                   </property>
-                  </item>
-                 </widget>
+                <item row="5" column="1">
+                 <widget class="QComboBox" name="simpleOutPreset"/>
                 </item>
-                <item row="3" column="0">
+                <item row="5" column="0">
                  <widget class="QLabel" name="label_24">
                   <property name="enabled">
                    <bool>true</bool>
@@ -578,7 +637,7 @@
                   </property>
                  </widget>
                 </item>
-                <item row="4" column="0">
+                <item row="6" column="0">
                  <widget class="QLabel" name="label_23">
                   <property name="text">
                    <string>Basic.Settings.Output.CustomEncoderSettings</string>
@@ -588,8 +647,28 @@
                   </property>
                  </widget>
                 </item>
-                <item row="4" column="1">
+                <item row="6" column="1">
                  <widget class="QLineEdit" name="simpleOutCustom"/>
+                </item>
+                <item row="4" column="1">
+                 <widget class="QCheckBox" name="simpleOutEnforce">
+                  <property name="text">
+                   <string>Basic.Settings.Output.EnforceBitrate</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="1">
+                 <widget class="QComboBox" name="simpleOutStrEncoder"/>
+                </item>
+                <item row="1" column="0">
+                 <widget class="QLabel" name="simpleOutRecEncoderLabel_2">
+                  <property name="text">
+                   <string>Basic.Settings.Output.Encoder</string>
+                  </property>
+                  <property name="buddy">
+                   <cstring>simpleOutRecEncoder</cstring>
+                  </property>
+                 </widget>
                 </item>
                </layout>
               </widget>
@@ -2418,8 +2497,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>98</width>
-              <height>28</height>
+              <width>80</width>
+              <height>16</height>
              </rect>
             </property>
            </widget>
@@ -2784,8 +2863,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>525</width>
-              <height>383</height>
+              <width>559</width>
+              <height>563</height>
              </rect>
             </property>
             <layout class="QVBoxLayout" name="verticalLayout_16">
@@ -3485,12 +3564,108 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>517</x>
-     <y>267</y>
+     <x>690</x>
+     <y>454</y>
     </hint>
     <hint type="destinationlabel">
-     <x>777</x>
-     <y>206</y>
+     <x>690</x>
+     <y>506</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>snappingEnabled</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>label_9</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>376</x>
+     <y>196</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>305</x>
+     <y>224</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>snappingEnabled</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>snapDistance</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>417</x>
+     <y>204</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>434</x>
+     <y>234</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>snappingEnabled</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>screenSnapping</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>476</x>
+     <y>202</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>466</x>
+     <y>253</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>snappingEnabled</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>sourceSnapping</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>518</x>
+     <y>204</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>515</x>
+     <y>277</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>snappingEnabled</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>centerSnapping</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>557</x>
+     <y>207</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>866</x>
+     <y>306</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>simpleOutAdvanced</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>simpleOutEnforce</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>484</x>
+     <y>147</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>483</x>
+     <y>170</y>
     </hint>
    </hints>
   </connection>

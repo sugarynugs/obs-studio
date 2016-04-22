@@ -28,6 +28,8 @@
 
 #include <assert.h>
 
+#include "ff-compat.h"
+
 static inline void shrink_packet(struct ff_packet *packet, int packet_length)
 {
 	if (packet_length <= packet->base.size) {
@@ -46,11 +48,6 @@ static bool handle_reset_packet(struct ff_decoder *decoder,
 		ff_clock_release(&decoder->clock);
 	decoder->clock = packet->clock;
 	av_free_packet(&packet->base);
-
-	// not a real packet, so try to get another packet
-	if (packet_queue_get(&decoder->packet_queue, packet, 1)
-			== FF_PACKET_FAIL)
-		return false;
 
 	return true;
 }
@@ -73,6 +70,22 @@ static int decode_frame(struct ff_decoder *decoder,
 	int ret;
 
 	while (true) {
+		ret = packet_queue_get(&decoder->packet_queue, packet, 1);
+		if (ret == FF_PACKET_FAIL) {
+			return -1;
+		}
+
+		if (packet->base.data ==
+				decoder->packet_queue.flush_packet.base.data) {
+			avcodec_flush_buffers(decoder->codec);
+			continue;
+		}
+
+		// Packet has a new clock (reset packet)
+		if (packet->clock != NULL)
+			if (!handle_reset_packet(decoder, packet))
+				return -1;
+
 		while (packet->base.size > 0) {
 			int complete;
 
@@ -93,33 +106,11 @@ static int decode_frame(struct ff_decoder *decoder,
 			*frame_complete = complete != 0;
 
 			return frame->nb_samples *
-			       av_get_bytes_per_sample(frame->format);
+				av_get_bytes_per_sample(frame->format);
 		}
 
 		if (packet->base.data != NULL)
 			av_packet_unref(&packet->base);
-
-		ret = packet_queue_get(&decoder->packet_queue, packet, 1);
-		if (ret == FF_PACKET_FAIL) {
-			return -1;
-		}
-
-		if (packet->base.data ==
-				decoder->packet_queue.flush_packet.base.data) {
-			avcodec_flush_buffers(decoder->codec);
-
-			// we were flushed, so try to get another packet
-			ret = packet_queue_get(&decoder->packet_queue,
-					packet, 1);
-			if (ret == FF_PACKET_FAIL) {
-				return -1;
-			}
-		}
-
-		// Packet has a new clock (reset packet)
-		if (packet->clock != NULL)
-			if (!handle_reset_packet(decoder, packet))
-				return -1;
 	}
 }
 

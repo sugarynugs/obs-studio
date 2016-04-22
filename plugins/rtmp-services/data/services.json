@@ -114,7 +114,8 @@
                 "keyint": 2,
                 "profile": "main",
                 "max video bitrate": 3500,
-                "max audio bitrate": 160
+                "max audio bitrate": 160,
+                "x264opts": "scenecut=0"
             }
         },
         {
@@ -339,6 +340,14 @@
                 {
                     "name": "AU (Sydney)",
                     "url": "rtmp://au.restream.io/live"
+                },
+                {
+                    "name": "AU-Secondary (Sydney)",
+                    "url": "rtmp://au-secondary.restream.io/live"
+                },
+                {
+                    "name": "SA (Saint Paul, Brazil)",
+                    "url": "rtmp://sa.restream.io/live"
                 }
             ]
         },
