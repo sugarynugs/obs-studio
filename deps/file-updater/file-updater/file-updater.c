@@ -124,8 +124,10 @@ static bool do_http_request(struct update_info *info, const char *url,
 		curl_easy_setopt(info->curl, CURLOPT_HEADERDATA, info);
 	}
 
+#if LIBCURL_VERSION_NUM >= 0x072400
 	// A lot of servers don't yet support ALPN
 	curl_easy_setopt(info->curl, CURLOPT_SSL_ENABLE_ALPN, 0);
+#endif
 
 	code = curl_easy_perform(info->curl);
 	if (code != CURLE_OK) {
@@ -140,7 +142,7 @@ static bool do_http_request(struct update_info *info, const char *url,
 
 	if (*response_code >= 400) {
 		warn("Remote update of URL \"%s\" failed: HTTP/%ld", url,
-			response_code);
+			*response_code);
 		return false;
 	}
 
@@ -195,6 +197,8 @@ static bool init_update(struct update_info *info)
 
 			info->header = curl_slist_append(info->header,
 				if_none_match.array);
+
+			dstr_free(&if_none_match);
 		}
 
 		obs_data_release(metadata);
@@ -401,6 +405,8 @@ static void update_save_metadata(struct update_info *info)
 	obs_data_set_string(data, "etag", info->etag_remote);
 	obs_data_save_json(data, path.array);
 	obs_data_release(data);
+
+	dstr_free(&path);
 }
 
 static void update_remote_version(struct update_info *info, int cur_version)
