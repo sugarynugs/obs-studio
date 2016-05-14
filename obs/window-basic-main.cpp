@@ -132,6 +132,9 @@ OBSBasic::OBSBasic(QWidget *parent)
 		int posy = config_get_int(App()->GlobalConfig(), "BasicWindow",
 				"posy");
 
+		if (!WindowPositionValid(posx, posy))
+			posx = posy = 0;
+
 		setGeometry(posx, posy, width, height);
 	}
 
@@ -4035,7 +4038,7 @@ void OBSBasic::OpenProjector(obs_source_t *source, int monitor)
 	delete projectors[monitor];
 	projectors[monitor].clear();
 
-	OBSProjector *projector = new OBSProjector(this, source);
+	OBSProjector *projector = new OBSProjector(nullptr, source);
 	projector->Init(monitor);
 
 	projectors[monitor] = projector;

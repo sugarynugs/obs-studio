@@ -1257,6 +1257,8 @@ void OBSBasicSettings::LoadAdvOutputStreamingEncoderProperties()
 	connect(streamEncoderProps, SIGNAL(Changed()),
 			this, SLOT(UpdateStreamDelayEstimate()));
 
+	curAdvStreamEncoder = type;
+
 	if (!SetComboByValue(ui->advOutEncoder, type)) {
 		uint32_t caps = obs_get_encoder_caps(type);
 		if ((caps & OBS_ENCODER_CAP_DEPRECATED) != 0) {
@@ -1319,6 +1321,8 @@ void OBSBasicSettings::LoadAdvOutputRecordingEncoderProperties()
 				"recordEncoder.json");
 		ui->advOutRecStandard->layout()->addWidget(recordEncoderProps);
 	}
+
+	curAdvRecordEncoder = type;
 
 	if (!SetComboByValue(ui->advOutRecEncoder, type)) {
 		uint32_t caps = obs_get_encoder_caps(type);
@@ -2366,6 +2370,8 @@ void OBSBasicSettings::SaveOutputSettings()
 	SaveComboData(ui->simpleOutRecEncoder, "SimpleOutput", "RecEncoder");
 	SaveEdit(ui->simpleOutMuxCustom, "SimpleOutput", "MuxerCustom");
 
+	curAdvStreamEncoder = GetComboData(ui->advOutEncoder);
+
 	SaveCheckBox(ui->advOutApplyService, "AdvOut", "ApplyServiceSettings");
 	SaveComboData(ui->advOutEncoder, "AdvOut", "Encoder");
 	SaveCheckBox(ui->advOutUseRescale, "AdvOut", "Rescale");
@@ -2376,6 +2382,8 @@ void OBSBasicSettings::SaveOutputSettings()
 
 	config_set_string(main->Config(), "AdvOut", "RecType",
 			RecTypeFromIdx(ui->advOutRecType->currentIndex()));
+
+	curAdvRecordEncoder = GetComboData(ui->advOutRecEncoder);
 
 	SaveEdit(ui->advOutRecPath, "AdvOut", "RecFilePath");
 	SaveCheckBox(ui->advOutNoSpace, "AdvOut", "RecFileNameWithoutSpace");
@@ -2703,11 +2711,15 @@ void OBSBasicSettings::on_advOutFFPathBrowse_clicked()
 
 void OBSBasicSettings::on_advOutEncoder_currentIndexChanged(int idx)
 {
+	if (loading)
+		return;
+
 	QString encoder = GetComboData(ui->advOutEncoder);
+	bool loadSettings = encoder == curAdvStreamEncoder;
 
 	delete streamEncoderProps;
 	streamEncoderProps = CreateEncoderPropertyView(QT_TO_UTF8(encoder),
-			"streamEncoder.json", true);
+			loadSettings ? "streamEncoder.json" : nullptr, true);
 	ui->advOutputStreamTab->layout()->addWidget(streamEncoderProps);
 
 	UNUSED_PARAMETER(idx);
@@ -2715,6 +2727,9 @@ void OBSBasicSettings::on_advOutEncoder_currentIndexChanged(int idx)
 
 void OBSBasicSettings::on_advOutRecEncoder_currentIndexChanged(int idx)
 {
+	if (loading)
+		return;
+
 	ui->advOutRecUseRescale->setEnabled(idx > 0);
 	ui->advOutRecRescaleContainer->setEnabled(idx > 0);
 
@@ -2723,10 +2738,12 @@ void OBSBasicSettings::on_advOutRecEncoder_currentIndexChanged(int idx)
 
 	if (idx > 0) {
 		QString encoder = GetComboData(ui->advOutRecEncoder);
+		bool loadSettings = encoder == curAdvRecordEncoder;
 
 		recordEncoderProps = CreateEncoderPropertyView(
 				QT_TO_UTF8(encoder),
-				"recordEncoder.json", true);
+				loadSettings ? "recordEncoder.json" : nullptr,
+				true);
 		ui->advOutRecStandard->layout()->addWidget(recordEncoderProps);
 	}
 }
@@ -3178,6 +3195,9 @@ void OBSBasicSettings::SimpleStreamingEncoderChanged()
 			/* bluray is for ideal bluray disc recording settings,
 			 * not streaming */
 			if (strcmp(val, "bd") == 0)
+				continue;
+			/* lossless should of course not be used to stream */
+			if (astrcmp_n(val, "lossless", 8) == 0)
 				continue;
 
 			ui->simpleOutPreset->addItem(QT_UTF8(name), val);
